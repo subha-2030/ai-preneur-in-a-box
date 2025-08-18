@@ -39,7 +39,7 @@ export default function LoginPage() {
 
       const data = await response.json();
       localStorage.setItem('accessToken', data.access_token);
-      router.push('/'); // Redirect to a protected route or dashboard
+      router.push('/dashboard'); // Redirect to a protected route or dashboard
     } catch (error: any) {
       setError(error.message);
     }
