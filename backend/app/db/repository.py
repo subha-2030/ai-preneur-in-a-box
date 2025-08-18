@@ -1,5 +1,5 @@
 from ..db.database import db
-from ..models.user import UserCreate, UserInDB
+from ..models.user import User, UserCreate
 from ..core.security import get_password_hash
 
 class UserRepository:
@@ -12,6 +12,10 @@ class UserRepository:
 
     async def create_user(self, user: UserCreate):
         hashed_password = get_password_hash(user.password)
-        user_in_db = UserInDB(**user.dict(), hashed_password=hashed_password)
-        await self.collection.insert_one(user_in_db.dict())
-        return user_in_db
+        user_doc = User(
+            email=user.email,
+            name=user.name,
+            hashed_password=hashed_password
+        )
+        await user_doc.insert()
+        return user_doc

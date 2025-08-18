@@ -4,6 +4,7 @@ pydantic
 python-dotenv
 pymongo
 passlib[bcrypt]
+bcrypt==3.2.0
 python-jose
 pydantic[email]
 motor

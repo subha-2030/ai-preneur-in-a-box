@@ -11,3 +11,11 @@ class User(Document):
 
     class Settings:
         name = "users"
+
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str
+    name: Optional[str] = None
+
+class UserInDB(User):
+    hashed_password: str
