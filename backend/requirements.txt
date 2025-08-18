@@ -1,0 +1,11 @@
+fastapi==0.116.1
+uvicorn[standard]
+pydantic
+python-dotenv
+pymongo
+passlib[bcrypt]
+python-jose
+pydantic[email]
+motor
+SQLAlchemy
+python-multipart

@@ -20,3 +20,6 @@ pip-delete-this-directory.txt
 dist/
 build/
 *.egg
+
+# Environment variables
+**/.env
