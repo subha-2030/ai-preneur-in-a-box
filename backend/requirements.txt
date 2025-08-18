@@ -9,3 +9,4 @@ pydantic[email]
 motor
 SQLAlchemy
 python-multipart
+beanie

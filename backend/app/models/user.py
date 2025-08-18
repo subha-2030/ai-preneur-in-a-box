@@ -1,23 +1,13 @@
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
 from datetime import datetime
+from beanie import Document
 
-class UserBase(BaseModel):
+class User(Document):
     email: EmailStr
     name: Optional[str] = None
-
-class UserCreate(UserBase):
-    password: str
-
-class UserInDBBase(UserBase):
-    id: int
+    hashed_password: str
     createdAt: datetime = Field(default_factory=datetime.utcnow)
 
-    class Config:
-        orm_mode = True
-
-class User(UserInDBBase):
-    pass
-
-class UserInDB(UserInDBBase):
-    hashed_password: str
+    class Settings:
+        name = "users"

@@ -1,6 +1,8 @@
 import os
 from motor.motor_asyncio import AsyncIOMotorClient
 from dotenv import load_dotenv
+from beanie import init_beanie
+from app.models.user import User
 
 load_dotenv()
 
@@ -11,8 +13,8 @@ db = client.get_database(os.getenv("MONGO_DATABASE"))
 
 async def connect_to_mongo():
     try:
-        await client.admin.command('ping')
-        print("Successfully connected to MongoDB Atlas!")
+        await init_beanie(database=db, document_models=[User])
+        print("Successfully connected to MongoDB Atlas and initialized Beanie!")
     except Exception as e:
         print(f"Error connecting to MongoDB Atlas: {e}")
 
