@@ -27,14 +27,22 @@ const Navbar = () => {
         <Link href="/" className="text-white text-lg font-bold">
           Home
         </Link>
-        <div>
+        <div className="flex items-center">
           {isAuthenticated ? (
-            <button
-              onClick={handleLogout}
-              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Logout
-            </button>
+            <>
+              <Link
+                href="/groups"
+                className="text-gray-300 hover:text-white mr-4"
+              >
+                Groups
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Logout
+              </button>
+            </>
           ) : (
             <>
               <Link

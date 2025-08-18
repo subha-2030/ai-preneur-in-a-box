@@ -3,6 +3,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from dotenv import load_dotenv
 from beanie import init_beanie
 from app.models.user import User
+from sqlalchemy.ext.declarative import declarative_base
 
 load_dotenv()
 
@@ -10,6 +11,8 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 
 client = AsyncIOMotorClient(DATABASE_URL)
 db = client.get_database(os.getenv("MONGO_DATABASE"))
+
+Base = declarative_base()
 
 async def connect_to_mongo():
     try:
