@@ -1,20 +1,18 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Table
-from sqlalchemy.orm import relationship
-from app.db.database import Base
+from pydantic import BaseModel, Field
+from typing import Optional, List
+from datetime import datetime
+from beanie import Document
 
-user_group_association = Table(
-    'user_group', Base.metadata,
-    Column('user_id', Integer, ForeignKey('users.id')),
-    Column('group_id', Integer, ForeignKey('groups.id'))
-)
+class Group(Document):
+    name: str
+    description: str
+    created_by: str  # User ID from MongoDB
+    members: List[str] = Field(default_factory=list)  # List of user IDs
+    created_at: datetime = Field(default_factory=datetime.utcnow)
 
-class Group(Base):
-    __tablename__ = 'groups'
+    class Settings:
+        name = "groups"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    description = Column(String)
-    created_by = Column(Integer, ForeignKey('users.id'))
-
-    creator = relationship("User")
-    members = relationship("User", secondary=user_group_association, back_populates="groups")
+class GroupCreate(BaseModel):
+    name: str
+    description: str
