@@ -75,7 +75,7 @@ export async function deleteNote(id: number): Promise<void> {
   }
 }
 export interface Group {
-  id: number;
+  id: string;
   name: string;
   description: string;
 }
@@ -87,7 +87,11 @@ export async function getGroups(): Promise<Group[]> {
   if (!response.ok) {
     throw new Error('Failed to fetch groups');
   }
-  return response.json();
+  const data = await response.json();
+  return data.map((group: any) => ({
+    ...group,
+    id: group._id,
+  }));
 }
 
 export async function createGroup(group: Omit<Group, 'id'>): Promise<Group> {

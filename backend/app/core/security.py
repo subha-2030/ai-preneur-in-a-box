@@ -60,7 +60,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
     if email is None:
         raise credentials_exception
     user_repo = UserRepository()
-    user = await user_repo.get_by_email(email)
+    user = await user_repo.get_user_by_email(email)
     if user is None:
         raise credentials_exception
     return user

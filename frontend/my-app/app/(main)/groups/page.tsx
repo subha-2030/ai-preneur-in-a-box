@@ -2,12 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
-type Group = {
-  id: number;
-  name: string;
-  description: string;
-};
+import { getGroups, Group } from "../../../lib/api";
 
 export default function GroupsPage() {
   const [groups, setGroups] = useState<Group[]>([]);
@@ -15,21 +10,9 @@ export default function GroupsPage() {
 
   useEffect(() => {
     const fetchGroups = async () => {
-      const token = localStorage.getItem("token");
-
       try {
-        const response = await fetch("/api/v1/groups", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setGroups(data);
-        } else {
-          console.error("Failed to fetch groups");
-        }
+        const data = await getGroups();
+        setGroups(data);
       } catch (error) {
         console.error("Error fetching groups:", error);
       }

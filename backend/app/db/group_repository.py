@@ -1,28 +1,50 @@
-from sqlalchemy.orm import Session
-from app.models.group import Group, user_group_association
-from app.models.user import User
-from pydantic import BaseModel
+from app.models.group import Group, GroupCreate
 from typing import List, Optional
+from bson import ObjectId
 
-class GroupCreate(BaseModel):
-    name: str
-    description: str
+async def create_group(group: GroupCreate, user_id: str) -> Group:
+    """Create a new group and add the creator as a member"""
+    new_group = Group(
+        name=group.name,
+        description=group.description,
+        created_by=user_id,
+        members=[user_id]  # Creator is automatically a member
+    )
+    await new_group.insert()
+    return new_group
 
-def create_group(db: Session, group: GroupCreate, user_id: int) -> Group:
-    db_group = Group(name=group.name, description=group.description, created_by=user_id)
-    db.add(db_group)
-    db.commit()
-    db.refresh(db_group)
-    add_user_to_group(db, db_group.id, user_id)
-    return db_group
+async def get_group(group_id: str) -> Optional[Group]:
+    """Get a group by ID"""
+    try:
+        return await Group.get(ObjectId(group_id))
+    except:
+        return None
 
-def get_group(db: Session, group_id: int) -> Optional[Group]:
-    return db.query(Group).filter(Group.id == group_id).first()
+async def get_groups_for_user(user_id: str) -> List[Group]:
+    """Get all groups where the user is a member"""
+    from beanie.operators import In
+    return await Group.find(In(Group.members, [user_id])).to_list()
 
-def get_groups_for_user(db: Session, user_id: int) -> List[Group]:
-    return db.query(Group).join(user_group_association).filter(user_group_association.c.user_id == user_id).all()
+async def add_user_to_group(group_id: str, user_id: str) -> bool:
+    """Add a user to a group"""
+    try:
+        group = await Group.get(ObjectId(group_id))
+        if group and user_id not in group.members:
+            group.members.append(user_id)
+            await group.save()
+            return True
+        return False
+    except:
+        return False
 
-def add_user_to_group(db: Session, group_id: int, user_id: int):
-    statement = user_group_association.insert().values(user_id=user_id, group_id=group_id)
-    db.execute(statement)
-    db.commit()
+async def remove_user_from_group(group_id: str, user_id: str) -> bool:
+    """Remove a user from a group"""
+    try:
+        group = await Group.get(ObjectId(group_id))
+        if group and user_id in group.members:
+            group.members.remove(user_id)
+            await group.save()
+            return True
+        return False
+    except:
+        return False
