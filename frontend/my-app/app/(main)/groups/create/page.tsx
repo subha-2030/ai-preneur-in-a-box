@@ -28,7 +28,9 @@ export default function CreateGroupPage() {
       });
 
       if (response.ok) {
-        router.push("/groups");
+        setTimeout(() => {
+          router.push("/groups");
+        }, 500);
       } else {
         console.error("Failed to create group");
       }

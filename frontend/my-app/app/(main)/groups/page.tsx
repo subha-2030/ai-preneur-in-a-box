@@ -16,10 +16,6 @@ export default function GroupsPage() {
   useEffect(() => {
     const fetchGroups = async () => {
       const token = localStorage.getItem("token");
-      if (!token) {
-        router.push("/login");
-        return;
-      }
 
       try {
         const response = await fetch("/api/v1/groups", {
