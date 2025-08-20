@@ -13,7 +13,7 @@ export default function RegisterPage() {
     e.preventDefault();
     setError(null);
 
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
     const response = await fetch(`${apiBaseUrl}/api/v1/users/`, {
       method: 'POST',
       headers: {
