@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createGroup } from "../../../../lib/api";
+import { createClient } from "../../../../lib/api";
 
-export default function CreateGroupPage() {
+export default function CreateClientPage() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [meetingNotes, setMeetingNotes] = useState("");
@@ -19,10 +19,10 @@ export default function CreateGroupPage() {
     }
 
     try {
-      await createGroup({ name, description });
-      router.push("/groups");
+      await createClient({ name, description });
+      router.push("/clients");
     } catch (error) {
-      console.error("Error creating group:", error);
+      console.error("Error creating client:", error);
     }
   };
 

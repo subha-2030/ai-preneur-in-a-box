@@ -75,62 +75,62 @@ export async function deleteNote(id: number): Promise<void> {
     throw new Error('Failed to delete note');
   }
 }
-export interface Group {
+export interface Client {
   id: string;
   name: string;
   description: string;
 }
 
-export async function getGroups(): Promise<Group[]> {
-  const response = await fetch(`${API_URL}/api/v1/groups/`, {
+export async function getClients(): Promise<Client[]> {
+  const response = await fetch(`${API_URL}/api/v1/clients/`, {
     headers: getAuthHeaders(),
   });
   if (!response.ok) {
-    throw new Error('Failed to fetch groups');
+    throw new Error('Failed to fetch clients');
   }
   const data = await response.json();
-  return data.map((group: any) => ({
-    ...group,
-    id: group._id,
+  return data.map((client: any) => ({
+    ...client,
+    id: client._id,
   }));
 }
 
-export async function createGroup(group: Omit<Group, 'id'>): Promise<Group> {
-  const response = await fetch(`${API_URL}/api/v1/groups/`, {
+export async function createClient(client: Omit<Client, 'id'>): Promise<Client> {
+  const response = await fetch(`${API_URL}/api/v1/clients/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       ...getAuthHeaders(),
     },
-    body: JSON.stringify(group),
+    body: JSON.stringify(client),
   });
   if (!response.ok) {
-    throw new Error('Failed to create group');
+    throw new Error('Failed to create client');
   }
   return response.json();
 }
 
-export async function updateGroup(id: number, group: Partial<Omit<Group, 'id'>>): Promise<Group> {
-  const response = await fetch(`${API_URL}/api/v1/groups/${id}`, {
+export async function updateClient(id: number, client: Partial<Omit<Client, 'id'>>): Promise<Client> {
+  const response = await fetch(`${API_URL}/api/v1/clients/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
       ...getAuthHeaders(),
     },
-    body: JSON.stringify(group),
+    body: JSON.stringify(client),
   });
   if (!response.ok) {
-    throw new Error('Failed to update group');
+    throw new Error('Failed to update client');
   }
   return response.json();
 }
 
-export async function deleteGroup(id: number): Promise<void> {
-  const response = await fetch(`${API_URL}/api/v1/groups/${id}`, {
+export async function deleteClient(id: number): Promise<void> {
+  const response = await fetch(`${API_URL}/api/v1/clients/${id}`, {
     method: 'DELETE',
     headers: getAuthHeaders(),
   });
   if (!response.ok) {
-    throw new Error('Failed to delete group');
+    throw new Error('Failed to delete client');
   }
 }

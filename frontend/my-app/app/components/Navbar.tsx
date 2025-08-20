@@ -31,10 +31,10 @@ const Navbar = () => {
           {isAuthenticated ? (
             <>
               <Link
-                href="/groups"
+                href="/clients"
                 className="text-gray-300 hover:text-white mr-4"
               >
-                Groups
+                Clients
               </Link>
               <button
                 onClick={handleLogout}

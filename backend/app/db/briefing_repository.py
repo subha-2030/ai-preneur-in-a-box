@@ -1,10 +1,18 @@
-from ..db.database import db
-from ..models.briefing import ResearchBriefing
+from app.models.briefing import ResearchBriefing, ResearchBriefingCreate
+from typing import List, Optional
+from bson import ObjectId
 
-class BriefingRepository:
-    def __init__(self):
-        self.db = db
-        self.collection = self.db.get_collection("briefings")
+async def create_briefing(briefing: ResearchBriefingCreate) -> ResearchBriefing:
+    new_briefing = ResearchBriefing(**briefing.dict())
+    await new_briefing.insert()
+    return new_briefing
 
-    async def add(self, briefing: ResearchBriefing):
-        await self.collection.insert_one(briefing.dict(by_alias=True))
+async def get_briefing(briefing_id: str) -> Optional[ResearchBriefing]:
+    try:
+        return await ResearchBriefing.get(ObjectId(briefing_id))
+    except:
+        return None
+
+async def get_briefings_for_user(user_id: str) -> List[ResearchBriefing]:
+    from beanie.operators import In
+    return await ResearchBriefing.find(ResearchBriefing.user_id == user_id).to_list()

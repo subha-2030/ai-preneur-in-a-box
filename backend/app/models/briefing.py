@@ -1,9 +1,9 @@
 from pydantic import BaseModel, Field
+from typing import Optional, List
 from datetime import datetime
-from typing import List, Optional
+from beanie import Document
 
-class ResearchBriefing(BaseModel):
-    id: Optional[str] = Field(None, alias="_id")
+class ResearchBriefing(Document):
     user_id: str
     client_name: str
     meeting_date: datetime
@@ -11,4 +11,16 @@ class ResearchBriefing(BaseModel):
     gaps: List[str]
     external_research: List[dict]
     suggested_questions: List[str]
-    createdAt: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    class Settings:
+        name = "research_briefings"
+
+class ResearchBriefingCreate(BaseModel):
+    user_id: str
+    client_name: str
+    meeting_date: datetime
+    summary: str
+    gaps: List[str]
+    external_research: List[dict]
+    suggested_questions: List[str]

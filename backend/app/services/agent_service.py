@@ -1,50 +1,68 @@
 import os
-from dotenv import load_dotenv
+import logging
 from openai import OpenAI
 from tavily import TavilyClient
-from app.models.briefing import ResearchBriefing
-from app.db.briefing_repository import BriefingRepository
+from app.db.meeting_note_repository import MeetingNoteRepository
+from app.db.briefing_repository import create_briefing
+import json
 
-load_dotenv()
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class AgentService:
     def __init__(self):
         self.openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         self.tavily_client = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
-        self.briefing_repo = BriefingRepository()
 
-    async def generate_research_briefing(self, user_id: str, client_name: str, meeting_date: str):
-        # 1. Fetch relevant meeting notes (mocked for now)
-        meeting_notes = "Mocked meeting notes for now."
+    async def generate_briefing(self, user_id: str, client_name: str, meeting_date: str):
+        logger.info(f"Starting briefing generation for user {user_id} and client {client_name}")
+        try:
+            logger.info("Fetching notes from repository.")
+            notes = await MeetingNoteRepository().get_all(user_id)
+            notes = [note.content for note in notes if note.client_name == client_name]
+            logger.info(f"Found {len(notes)} notes for the client.")
 
-        # 2. Construct a prompt and call the LLM API
-        prompt = f"Generate a research briefing for a meeting with {client_name} on {meeting_date}. \
-                   Here are some meeting notes: {meeting_notes}"
-        
-        summary_response = self.openai_client.chat.completions.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": prompt}
-            ]
-        )
-        summary = summary_response.choices.message.content
+            prompt = f"""
+            You are an AI assistant for a consultant. Your task is to generate a research briefing for an upcoming meeting.
+            Here are the notes from previous meetings with this client:
+            ---
+            {" ".join(notes)}
+            ---
+            Based on these notes, please provide the following:
+            1. A summary of the previous meetings.
+            2. A list of identified gaps or open questions.
+            3. A list of suggested talking points for the upcoming meeting.
+            Please format your response as a JSON object with the following keys: "summary", "gaps", "suggested_talking_points".
+            """
+            logger.info("Generating prompt for LLM.")
 
-        # 3. Call the Web Search API for external research
-        search_results = self.tavily_client.search(query=f"latest news about {client_name}")
-        external_research = [{"url": res["url"], "content": res["content"]} for res in search_results["results"]]
+            response = self.openai_client.chat.completions.create(
+                model="gpt-4",
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": prompt},
+                ],
+            )
+            logger.info("Received response from LLM.")
 
-        # 4. Compile the results into a ResearchBriefing document
-        briefing = ResearchBriefing(
-            user_id=user_id,
-            client_name=client_name,
-            meeting_date=meeting_date,
-            summary=summary,
-            gaps=[],  # Mocked for now
-            external_research=external_research,
-            suggested_questions=[]  # Mocked for now
-        )
+            llm_response = json.loads(response.choices.message.content)
+            logger.info("Parsed LLM response.")
 
-        # 5. Save the new briefing to the database
-        await self.briefing_repo.add(briefing)
-        return briefing
+            search_results = self.tavily_client.search(query=f"recent news about {client_name}")
+            logger.info("Received search results from Tavily.")
+
+            briefing_data = {
+                "user_id": user_id,
+                "client_name": client_name,
+                "meeting_date": meeting_date,
+                "summary": llm_response.get("summary"),
+                "gaps": llm_response.get("gaps"),
+                "external_research": search_results["results"],
+                "suggested_questions": llm_response.get("suggested_talking_points"),
+            }
+            logger.info("Compiled briefing data.")
+
+            await create_briefing(briefing_data)
+            logger.info("Successfully created briefing in the database.")
+        except Exception as e:
+            logger.error(f"An error occurred during briefing generation: {e}", exc_info=True)

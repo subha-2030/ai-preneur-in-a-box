@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from beanie import init_beanie
 from app.models.user import User
 from app.models.meeting_note import MeetingNote
-from app.models.group import Group
+from app.models.client import Client
 from sqlalchemy.ext.declarative import declarative_base
 
 load_dotenv()
@@ -18,7 +18,7 @@ Base = declarative_base()
 
 async def connect_to_mongo():
     try:
-        await init_beanie(database=db, document_models=[User, MeetingNote, Group])
+        await init_beanie(database=db, document_models=[User, MeetingNote, Client])
         print("Successfully connected to MongoDB Atlas and initialized Beanie!")
     except Exception as e:
         print(f"Error connecting to MongoDB Atlas: {e}")
