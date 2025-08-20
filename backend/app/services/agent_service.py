@@ -1,9 +1,11 @@
 import os
 import logging
+from datetime import datetime
 from openai import OpenAI
 from tavily import TavilyClient
 from app.db.meeting_note_repository import MeetingNoteRepository
 from app.db.briefing_repository import create_briefing
+from app.models.briefing import ResearchBriefingCreate
 import json
 
 logging.basicConfig(level=logging.INFO)
@@ -21,6 +23,10 @@ class AgentService:
             notes = await MeetingNoteRepository().get_all(user_id)
             notes = [note.content for note in notes if note.client_name == client_name]
             logger.info(f"Found {len(notes)} notes for the client.")
+
+            if not notes:
+                logger.info("No notes found for this client. Skipping briefing generation.")
+                return
 
             prompt = f"""
             You are an AI assistant for a consultant. Your task is to generate a research briefing for an upcoming meeting.
@@ -44,8 +50,9 @@ class AgentService:
                 ],
             )
             logger.info("Received response from LLM.")
+            logger.info(f"LLM Response: {response.choices}")
 
-            llm_response = json.loads(response.choices.message.content)
+            llm_response = json.loads(response.choices[0].message.content)
             logger.info("Parsed LLM response.")
 
             search_results = self.tavily_client.search(query=f"recent news about {client_name}")
@@ -54,15 +61,17 @@ class AgentService:
             briefing_data = {
                 "user_id": user_id,
                 "client_name": client_name,
-                "meeting_date": meeting_date,
-                "summary": llm_response.get("summary"),
+                "meeting_date": datetime.fromisoformat(meeting_date),
+                "summary": llm_response.get("summary") if isinstance(llm_response.get("summary"), list) and llm_response.get("summary") else llm_response.get("summary", ""),
                 "gaps": llm_response.get("gaps"),
                 "external_research": search_results["results"],
                 "suggested_questions": llm_response.get("suggested_talking_points"),
             }
             logger.info("Compiled briefing data.")
 
-            await create_briefing(briefing_data)
+            briefing_to_create = ResearchBriefingCreate(**briefing_data)
+            logger.info("Briefing data.", briefing_to_create)
+            await create_briefing(briefing_to_create)
             logger.info("Successfully created briefing in the database.")
         except Exception as e:
             logger.error(f"An error occurred during briefing generation: {e}", exc_info=True)

@@ -4,7 +4,7 @@ from typing import Optional
 
 class UserRepository:
     async def get_user_by_email(self, email: str) -> Optional[User]:
-        return await User.find_one(User.email == email)
+        return await User.find_one({"email": email})
 
     async def create_user(self, user: UserCreate) -> User:
         hashed_password = get_password_hash(user.password)
