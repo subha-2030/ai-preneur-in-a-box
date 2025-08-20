@@ -13,6 +13,7 @@ export interface Note {
   id: number;
   title: string;
   content: string;
+  createdAt: string;
 }
 
 export async function getNotes(): Promise<Note[]> {
@@ -81,7 +82,7 @@ export interface Group {
 }
 
 export async function getGroups(): Promise<Group[]> {
-  const response = await fetch(`${API_URL}/api/v1/groups`, {
+  const response = await fetch(`${API_URL}/api/v1/groups/`, {
     headers: getAuthHeaders(),
   });
   if (!response.ok) {
@@ -91,7 +92,7 @@ export async function getGroups(): Promise<Group[]> {
 }
 
 export async function createGroup(group: Omit<Group, 'id'>): Promise<Group> {
-  const response = await fetch(`${API_URL}/api/v1/groups`, {
+  const response = await fetch(`${API_URL}/api/v1/groups/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

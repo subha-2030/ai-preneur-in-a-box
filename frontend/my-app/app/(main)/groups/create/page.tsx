@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { createGroup } from "../../../../lib/api";
 
 export default function CreateGroupPage() {
   const [name, setName] = useState("");
@@ -18,22 +19,8 @@ export default function CreateGroupPage() {
     }
 
     try {
-      const response = await fetch("/api/v1/groups/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ name, description, meeting_notes: meetingNotes }),
-      });
-
-      if (response.ok) {
-        setTimeout(() => {
-          router.push("/groups");
-        }, 500);
-      } else {
-        console.error("Failed to create group");
-      }
+      await createGroup({ name, description });
+      router.push("/groups");
     } catch (error) {
       console.error("Error creating group:", error);
     }

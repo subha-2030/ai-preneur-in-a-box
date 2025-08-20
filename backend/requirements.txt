@@ -11,3 +11,8 @@ motor
 SQLAlchemy
 python-multipart
 beanie
+celery
+redis
+openai
+tavily-python
+PyJWT
