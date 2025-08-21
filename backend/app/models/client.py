@@ -16,3 +16,4 @@ class Client(Document):
 class ClientCreate(BaseModel):
     name: str
     description: str
+    meetingNotes: Optional[str] = None

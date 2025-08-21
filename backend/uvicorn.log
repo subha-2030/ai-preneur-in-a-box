@@ -1,0 +1,68 @@
+INFO:     Will watch for changes in these directories: ['/Users/sshetty/Documents/snapcamp/backend']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [98156] using WatchFiles
+/Users/sshetty/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+/Users/sshetty/Library/Python/3.9/lib/python/site-packages/pydantic/_internal/_config.py:373: UserWarning: Valid config keys have changed in V2:
+* 'allow_population_by_field_name' has been renamed to 'validate_by_name'
+* 'orm_mode' has been renamed to 'from_attributes'
+  warnings.warn(message, UserWarning)
+INFO:     Started server process [98214]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+Error connecting to MongoDB Atlas: ac-awrskes-shard-00-01.pldgiem.mongodb.net:27017: [Errno 8] nodename nor servname provided, or not known (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms),ac-awrskes-shard-00-00.pldgiem.mongodb.net:27017: [Errno 8] nodename nor servname provided, or not known (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms),ac-awrskes-shard-00-02.pldgiem.mongodb.net:27017: [Errno 8] nodename nor servname provided, or not known (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 68a6bd50ecb3b8a4cd2c7a5a, topology_type: ReplicaSetNoPrimary, servers: [<ServerDescription ('ac-awrskes-shard-00-00.pldgiem.mongodb.net', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('ac-awrskes-shard-00-00.pldgiem.mongodb.net:27017: [Errno 8] nodename nor servname provided, or not known (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>, <ServerDescription ('ac-awrskes-shard-00-01.pldgiem.mongodb.net', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('ac-awrskes-shard-00-01.pldgiem.mongodb.net:27017: [Errno 8] nodename nor servname provided, or not known (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>, <ServerDescription ('ac-awrskes-shard-00-02.pldgiem.mongodb.net', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('ac-awrskes-shard-00-02.pldgiem.mongodb.net:27017: [Errno 8] nodename nor servname provided, or not known (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+INFO:     127.0.0.1:64092 - "POST /api/v1/auth/login HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/sshetty/Library/Python/3.9/lib/python/site-packages/uvicorn/protocols/http/httptools_impl.py", line 409, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/Users/sshetty/Library/Python/3.9/lib/python/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+  File "/Users/sshetty/Library/Python/3.9/lib/python/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/sshetty/Library/Python/3.9/lib/python/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/sshetty/Library/Python/3.9/lib/python/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/sshetty/Library/Python/3.9/lib/python/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/sshetty/Library/Python/3.9/lib/python/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/sshetty/Library/Python/3.9/lib/python/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/sshetty/Library/Python/3.9/lib/python/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/sshetty/Library/Python/3.9/lib/python/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/sshetty/Library/Python/3.9/lib/python/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/sshetty/Library/Python/3.9/lib/python/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/sshetty/Library/Python/3.9/lib/python/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/sshetty/Library/Python/3.9/lib/python/site-packages/starlette/routing.py", line 78, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/sshetty/Library/Python/3.9/lib/python/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/sshetty/Library/Python/3.9/lib/python/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/sshetty/Library/Python/3.9/lib/python/site-packages/starlette/routing.py", line 75, in app
+    response = await f(request)
+  File "/Users/sshetty/Library/Python/3.9/lib/python/site-packages/fastapi/routing.py", line 302, in app
+    raw_response = await run_endpoint_function(
+  File "/Users/sshetty/Library/Python/3.9/lib/python/site-packages/fastapi/routing.py", line 213, in run_endpoint_function
+    return await dependant.call(**values)
+  File "/Users/sshetty/Documents/snapcamp/backend/app/api/v1/endpoints/auth.py", line 39, in login_for_access_token
+    user = await user_repo.get_user_by_email(form_data.username)
+  File "/Users/sshetty/Documents/snapcamp/backend/app/db/repository.py", line 7, in get_user_by_email
+    return await User.find_one({"email": email})
+  File "/Users/sshetty/Library/Python/3.9/lib/python/site-packages/beanie/odm/interfaces/find.py", line 112, in find_one
+    args = cls._add_class_id_filter(args, with_children)
+  File "/Users/sshetty/Library/Python/3.9/lib/python/site-packages/beanie/odm/interfaces/find.py", line 438, in _add_class_id_filter
+    if any(
+  File "/Users/sshetty/Library/Python/3.9/lib/python/site-packages/beanie/odm/interfaces/find.py", line 442, in <genexpr>
+    if isinstance(a, Iterable) and cls.get_settings().class_id in a
+  File "/Users/sshetty/Library/Python/3.9/lib/python/site-packages/beanie/odm/documents.py", line 1110, in get_settings
+    raise CollectionWasNotInitialized
+beanie.exceptions.CollectionWasNotInitialized
+INFO:     127.0.0.1:64093 - "POST /api/v1/briefings/.generate-test HTTP/1.1" 405 Method Not Allowed

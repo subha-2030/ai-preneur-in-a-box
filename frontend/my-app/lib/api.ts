@@ -6,6 +6,7 @@ const getAuthHeaders = (): HeadersInit => {
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
+  console.log("Auth Headers:", headers);
   return headers;
 };
 
@@ -79,6 +80,7 @@ export interface Client {
   id: string;
   name: string;
   description: string;
+  meetingNotes?: string;
 }
 
 export async function getClients(): Promise<Client[]> {
@@ -106,6 +108,26 @@ export async function createClient(client: Omit<Client, 'id'>): Promise<Client> 
   });
   if (!response.ok) {
     throw new Error('Failed to create client');
+  }
+  return response.json();
+}
+
+export async function getUpcomingMeetings(): Promise<any[]> {
+  const response = await fetch(`${API_URL}/api/v1/integrations/google/upcoming-meetings`, {
+    headers: getAuthHeaders(),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch upcoming meetings');
+  }
+  return response.json();
+}
+
+export async function getGoogleAuthorizationUrl(): Promise<{ authorization_url: string }> {
+  const response = await fetch(`${API_URL}/api/v1/integrations/google/authorization-url`, {
+    headers: getAuthHeaders(),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to get Google authorization URL');
   }
   return response.json();
 }

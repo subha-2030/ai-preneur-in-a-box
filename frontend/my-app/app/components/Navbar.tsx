@@ -36,6 +36,12 @@ const Navbar = () => {
               >
                 Clients
               </Link>
+              <Link
+                href="/settings"
+                className="text-gray-300 hover:text-white mr-4"
+              >
+                Settings
+              </Link>
               <button
                 onClick={handleLogout}
                 className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"

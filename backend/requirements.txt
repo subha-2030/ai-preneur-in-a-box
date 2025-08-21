@@ -13,6 +13,8 @@ python-multipart
 beanie
 celery
 redis
+google-api-python-client
+google-auth-oauthlib
 openai
 tavily-python
 PyJWT

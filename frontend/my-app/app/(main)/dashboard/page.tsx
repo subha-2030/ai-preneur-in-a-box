@@ -1,12 +1,35 @@
-export default function Dashboard() {
-    return (
-        <div className="flex flex-col items-center justify-center min-h-screen py-2">
-            <h1 className="text-4xl font-bold">
-                Welcome to AI-preneur-in-a-box
-            </h1>
-            <p className="mt-3 text-xl">
-                This is your page to manage all your consulting engagements.
-            </p>
-        </div>
-    );
+"use client";
+import { useEffect, useState } from "react";
+import { getUpcomingMeetings } from "@/lib/api";
+
+export default function DashboardPage() {
+  const [meetings, setMeetings] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchMeetings = async () => {
+      try {
+        const upcomingMeetings = await getUpcomingMeetings();
+        setMeetings(upcomingMeetings);
+      } catch (error) {
+        console.error("Error fetching upcoming meetings:", error);
+      }
+    };
+
+    fetchMeetings();
+  }, []);
+
+  return (
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Upcoming Meetings</h1>
+      <ul>
+        {meetings.map((meeting: any) => (
+          <li key={meeting.id} className="mb-2">
+            <a href={meeting.htmlLink} target="_blank" rel="noopener noreferrer">
+              {meeting.summary} - {new Date(meeting.start.dateTime).toLocaleString()}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }

@@ -19,7 +19,7 @@ export default function CreateClientPage() {
     }
 
     try {
-      await createClient({ name, description });
+      await createClient({ name, description, meetingNotes });
       router.push("/clients");
     } catch (error) {
       console.error("Error creating client:", error);

@@ -1,6 +1,8 @@
 from app.models.client import Client, ClientCreate
+from app.models.meeting_note import MeetingNote
 from typing import List, Optional
 from bson import ObjectId
+from datetime import datetime
 
 async def create_client(client: ClientCreate, user_id: str) -> Client:
     """Create a new client and add the creator as a member"""
@@ -11,6 +13,16 @@ async def create_client(client: ClientCreate, user_id: str) -> Client:
         members=[user_id]  # Creator is automatically a member
     )
     await new_client.insert()
+
+    if client.meetingNotes:
+        meeting_note = MeetingNote(
+            user_id=user_id,
+            client_name=client.name,
+            meeting_date=datetime.utcnow(),
+            content=client.meetingNotes
+        )
+        await meeting_note.insert()
+
     return new_client
 
 async def get_client(client_id: str) -> Optional[Client]:

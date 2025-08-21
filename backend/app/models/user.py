@@ -8,6 +8,7 @@ class User(Document):
     name: Optional[str] = None
     hashed_password: str
     is_active: bool = True
+    google_calendar_credentials: Optional[dict] = None
     createdAt: datetime = Field(default_factory=datetime.utcnow)
 
     class Settings:
