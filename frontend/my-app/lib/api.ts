@@ -131,6 +131,15 @@ export async function getGoogleAuthorizationUrl(): Promise<{ authorization_url: 
   }
   return response.json();
 }
+export async function handleGoogleCallback(code: string, state: string): Promise<any> {
+  const response = await fetch(`${API_URL}/api/v1/integrations/google/callback?code=${code}&state=${state}`, {
+    headers: getAuthHeaders(),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to handle Google callback');
+  }
+  return response.json();
+}
 
 export async function updateClient(id: number, client: Partial<Omit<Client, 'id'>>): Promise<Client> {
   const response = await fetch(`${API_URL}/api/v1/clients/${id}`, {

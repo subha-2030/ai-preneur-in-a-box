@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.sessions import SessionMiddleware
 from app.api.v1.api import api_router
 from app.db.database import connect_to_mongo, close_mongo_connection
 
@@ -18,6 +19,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Add SessionMiddleware
+# Make sure to set a SECRET_KEY in your .env file
+import os
+app.add_middleware(SessionMiddleware, secret_key=os.environ.get("SECRET_KEY"))
 
 
 @app.on_event("startup")

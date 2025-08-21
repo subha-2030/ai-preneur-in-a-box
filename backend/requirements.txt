@@ -18,3 +18,4 @@ google-auth-oauthlib
 openai
 tavily-python
 PyJWT
+itsdangerous

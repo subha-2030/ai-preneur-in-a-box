@@ -19,7 +19,7 @@ class GoogleCalendarService:
         }
         self.scopes = ["https://www.googleapis.com/auth/calendar.readonly"]
 
-    def get_authorization_url(self):
+    def get_authorization_url(self, state=None):
         flow = Flow.from_client_config(
             self.client_config,
             scopes=self.scopes,
@@ -27,9 +27,10 @@ class GoogleCalendarService:
         )
         authorization_url, state = flow.authorization_url(
             access_type='offline',
-            include_granted_scopes='true'
+            include_granted_scopes='true',
+            state=state
         )
-        return authorization_url
+        return authorization_url, state
 
     async def process_callback(self, code: str, user: User):
         flow = Flow.from_client_config(
