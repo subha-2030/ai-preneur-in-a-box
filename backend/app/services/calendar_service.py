@@ -1,9 +1,14 @@
 import os
+import logging
+from datetime import datetime
 from google_auth_oauthlib.flow import Flow
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from app.models.user import User
 from app.db.repository import UserRepository
+
+# Set up logging
+logger = logging.getLogger(__name__)
 
 class GoogleCalendarService:
     def __init__(self):
@@ -13,30 +18,41 @@ class GoogleCalendarService:
                 "client_secret": os.getenv("GOOGLE_CLIENT_SECRET"),
                 "auth_uri": "https://accounts.google.com/o/oauth2/auth",
                 "token_uri": "https://oauth2.googleapis.com/token",
-                "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-                "redirect_uris": ["http://localhost:8000/api/v1/integrations/google/callback"]
+                "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs"
             }
         }
+        self.redirect_uri = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:8000/api/v1/integrations/google/callback")
         self.scopes = ["https://www.googleapis.com/auth/calendar.readonly"]
 
     def get_authorization_url(self, state=None):
+        # DEBUG: Log the redirect URI being used
+        logger.info(f"DEBUG: Using redirect_uri: {self.redirect_uri}")
+        logger.info(f"DEBUG: Environment GOOGLE_REDIRECT_URI: {os.getenv('GOOGLE_REDIRECT_URI')}")
+        
         flow = Flow.from_client_config(
             self.client_config,
             scopes=self.scopes,
-            redirect_uri=self.client_config['web']['redirect_uris']
+            redirect_uri=self.redirect_uri
         )
         authorization_url, state = flow.authorization_url(
             access_type='offline',
             include_granted_scopes='true',
             state=state
         )
+        
+        # DEBUG: Log the full authorization URL
+        logger.info(f"DEBUG: Generated authorization URL: {authorization_url}")
+        
         return authorization_url, state
 
     async def process_callback(self, code: str, user: User):
+        # DEBUG: Log the redirect URI being used in callback
+        logger.info(f"DEBUG: Callback using redirect_uri: {self.redirect_uri}")
+        
         flow = Flow.from_client_config(
             self.client_config,
             scopes=self.scopes,
-            redirect_uri=self.client_config['web']['redirect_uris']
+            redirect_uri=self.redirect_uri
         )
         flow.fetch_token(code=code)
         credentials = flow.credentials

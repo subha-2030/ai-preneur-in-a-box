@@ -23,7 +23,11 @@ app.add_middleware(
 # Add SessionMiddleware
 # Make sure to set a SECRET_KEY in your .env file
 import os
-app.add_middleware(SessionMiddleware, secret_key=os.environ.get("SECRET_KEY"))
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=os.environ.get("SECRET_KEY"),
+    same_site="lax"  # Allow cookies in cross-site navigation (OAuth redirects)
+)
 
 
 @app.on_event("startup")

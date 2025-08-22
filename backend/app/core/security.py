@@ -1,6 +1,7 @@
 import os
+import secrets
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Optional, Dict, Any
 
 from dotenv import load_dotenv
 from jose import JWTError, jwt
@@ -41,6 +42,42 @@ def decode_token(token: str) -> Optional[str]:
         if email is None:
             return None
         return email
+    except JWTError:
+        return None
+
+
+def create_oauth_state_token(user_id: str) -> str:
+    """Create a JWT state token for OAuth flow with security features."""
+    now = datetime.utcnow()
+    expire = now + timedelta(minutes=10)  # 10-minute expiration
+    nonce = secrets.token_urlsafe(32)  # Generate random nonce
+    
+    payload = {
+        "user_id": user_id,
+        "iat": now,
+        "exp": expire,
+        "nonce": nonce,
+        "aud": "oauth_state"  # Audience for token purpose verification
+    }
+    
+    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+
+
+def decode_oauth_state_token(token: str) -> Optional[Dict[str, Any]]:
+    """Decode and validate OAuth state token."""
+    try:
+        payload = jwt.decode(
+            token,
+            SECRET_KEY,
+            algorithms=[ALGORITHM],
+            audience="oauth_state"  # Validate audience
+        )
+        
+        # Verify required fields
+        if not all(key in payload for key in ["user_id", "iat", "exp", "nonce", "aud"]):
+            return None
+            
+        return payload
     except JWTError:
         return None
 from fastapi import Depends, HTTPException, status

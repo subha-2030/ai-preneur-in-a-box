@@ -1,10 +1,14 @@
-const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
+// Debug logging to verify environment variable is loaded
+console.log("API_URL configured as:", API_URL);
+console.log("NEXT_PUBLIC_API_URL from env:", process.env.NEXT_PUBLIC_API_URL);
 
 const getAuthHeaders = (): HeadersInit => {
-  const token = localStorage.getItem('accessToken');
+  const token = localStorage.getItem("accessToken");
   const headers: HeadersInit = {};
   if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+    headers["Authorization"] = `Bearer ${token}`;
   }
   console.log("Auth Headers:", headers);
   return headers;
@@ -22,7 +26,7 @@ export async function getNotes(): Promise<Note[]> {
     headers: getAuthHeaders(),
   });
   if (!response.ok) {
-    throw new Error('Failed to fetch notes');
+    throw new Error("Failed to fetch notes");
   }
   return response.json();
 }
@@ -32,48 +36,51 @@ export async function getNoteById(id: number): Promise<Note> {
     headers: getAuthHeaders(),
   });
   if (!response.ok) {
-    throw new Error('Failed to fetch note');
+    throw new Error("Failed to fetch note");
   }
   return response.json();
 }
 
-export async function createNote(note: Omit<Note, 'id'>): Promise<Note> {
+export async function createNote(note: Omit<Note, "id">): Promise<Note> {
   const response = await fetch(`${API_URL}/api/v1/notes`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...getAuthHeaders(),
     },
     body: JSON.stringify(note),
   });
   if (!response.ok) {
-    throw new Error('Failed to create note');
+    throw new Error("Failed to create note");
   }
   return response.json();
 }
 
-export async function updateNote(id: number, note: Partial<Omit<Note, 'id'>>): Promise<Note> {
+export async function updateNote(
+  id: number,
+  note: Partial<Omit<Note, "id">>
+): Promise<Note> {
   const response = await fetch(`${API_URL}/api/v1/notes/${id}`, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...getAuthHeaders(),
     },
     body: JSON.stringify(note),
   });
   if (!response.ok) {
-    throw new Error('Failed to update note');
+    throw new Error("Failed to update note");
   }
   return response.json();
 }
 
 export async function deleteNote(id: number): Promise<void> {
   const response = await fetch(`${API_URL}/api/v1/notes/${id}`, {
-    method: 'DELETE',
+    method: "DELETE",
     headers: getAuthHeaders(),
   });
   if (!response.ok) {
-    throw new Error('Failed to delete note');
+    throw new Error("Failed to delete note");
   }
 }
 export interface Client {
@@ -88,7 +95,7 @@ export async function getClients(): Promise<Client[]> {
     headers: getAuthHeaders(),
   });
   if (!response.ok) {
-    throw new Error('Failed to fetch clients');
+    throw new Error("Failed to fetch clients");
   }
   const data = await response.json();
   return data.map((client: any) => ({
@@ -97,71 +104,90 @@ export async function getClients(): Promise<Client[]> {
   }));
 }
 
-export async function createClient(client: Omit<Client, 'id'>): Promise<Client> {
+export async function createClient(
+  client: Omit<Client, "id">
+): Promise<Client> {
   const response = await fetch(`${API_URL}/api/v1/clients/`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...getAuthHeaders(),
     },
     body: JSON.stringify(client),
   });
   if (!response.ok) {
-    throw new Error('Failed to create client');
+    throw new Error("Failed to create client");
   }
   return response.json();
 }
 
 export async function getUpcomingMeetings(): Promise<any[]> {
-  const response = await fetch(`${API_URL}/api/v1/integrations/google/upcoming-meetings`, {
-    headers: getAuthHeaders(),
-  });
+  const response = await fetch(
+    `${API_URL}/api/v1/integrations/google/upcoming-meetings`,
+    {
+      headers: getAuthHeaders(),
+    }
+  );
   if (!response.ok) {
-    throw new Error('Failed to fetch upcoming meetings');
+    throw new Error("Failed to fetch upcoming meetings");
   }
   return response.json();
 }
 
-export async function getGoogleAuthorizationUrl(): Promise<{ authorization_url: string }> {
-  const response = await fetch(`${API_URL}/api/v1/integrations/google/authorization-url`, {
-    headers: getAuthHeaders(),
-  });
+export async function getGoogleAuthorizationUrl(): Promise<{
+  authorization_url: string;
+}> {
+  const response = await fetch(
+    `${API_URL}/api/v1/integrations/google/authorization-url`,
+    {
+      headers: getAuthHeaders(),
+    }
+  );
   if (!response.ok) {
-    throw new Error('Failed to get Google authorization URL');
+    throw new Error("Failed to get Google authorization URL");
   }
   return response.json();
 }
-export async function handleGoogleCallback(code: string, state: string): Promise<any> {
-  const response = await fetch(`${API_URL}/api/v1/integrations/google/callback?code=${code}&state=${state}`, {
-    headers: getAuthHeaders(),
-  });
+export async function handleGoogleCallback(
+  code: string,
+  state: string
+): Promise<any> {
+  const response = await fetch(
+    `${API_URL}/api/v1/integrations/google/callback?code=${code}&state=${state}`,
+    {
+      headers: getAuthHeaders(),
+    }
+  );
   if (!response.ok) {
-    throw new Error('Failed to handle Google callback');
+    throw new Error("Failed to handle Google callback");
   }
   return response.json();
 }
 
-export async function updateClient(id: number, client: Partial<Omit<Client, 'id'>>): Promise<Client> {
+export async function updateClient(
+  id: number,
+  client: Partial<Omit<Client, "id">>
+): Promise<Client> {
   const response = await fetch(`${API_URL}/api/v1/clients/${id}`, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...getAuthHeaders(),
     },
     body: JSON.stringify(client),
   });
   if (!response.ok) {
-    throw new Error('Failed to update client');
+    throw new Error("Failed to update client");
   }
   return response.json();
 }
 
 export async function deleteClient(id: number): Promise<void> {
   const response = await fetch(`${API_URL}/api/v1/clients/${id}`, {
-    method: 'DELETE',
+    method: "DELETE",
     headers: getAuthHeaders(),
   });
   if (!response.ok) {
-    throw new Error('Failed to delete client');
+    throw new Error("Failed to delete client");
   }
 }

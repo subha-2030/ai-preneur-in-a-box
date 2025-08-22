@@ -12,7 +12,14 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-client = AsyncIOMotorClient(DATABASE_URL)
+# Configure MongoDB client with SSL settings to handle certificate issues
+client = AsyncIOMotorClient(
+    DATABASE_URL,
+    tls=True,
+    tlsAllowInvalidCertificates=True,
+    tlsAllowInvalidHostnames=True,
+    serverSelectionTimeoutMS=5000
+)
 db = client.get_database(os.getenv("MONGO_DATABASE"))
 
 Base = declarative_base()

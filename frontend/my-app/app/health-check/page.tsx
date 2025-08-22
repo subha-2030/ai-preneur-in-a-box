@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 export default function HealthCheck() {
   const [status, setStatus] = useState(null);
@@ -10,9 +10,11 @@ export default function HealthCheck() {
   useEffect(() => {
     const fetchHealth = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/health`);
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/health`
+        );
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
         const data = await response.json();
         setStatus(data.status);
