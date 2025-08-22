@@ -19,3 +19,4 @@ openai
 tavily-python
 PyJWT
 itsdangerous
+itsdangerous
