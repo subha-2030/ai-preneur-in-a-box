@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
-import { useParams } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -26,35 +26,70 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
-
+import { getNoteById, updateNote, deleteNote, Note } from '@/lib/api';
+ 
 const formSchema = z.object({
   content: z.string().min(1, {
     message: 'Note content cannot be empty.',
   }),
 });
-
+ 
 const NoteDetailPage = () => {
   const { noteId } = useParams();
-
+  const router = useRouter();
+  const [note, setNote] = useState<Note | null>(null);
+ 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       content: '',
     },
   });
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+ 
+  useEffect(() => {
+    const fetchNote = async () => {
+      if (noteId) {
+        try {
+          const fetchedNote = await getNoteById(Number(noteId));
+          setNote(fetchedNote);
+          form.reset({ content: fetchedNote.content });
+        } catch (error) {
+          console.error('Failed to fetch note', error);
+        }
+      }
+    };
+    fetchNote();
+  }, [noteId, form]);
+ 
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (note) {
+      try {
+        await updateNote(note.id, { content: values.content });
+        router.push('/notes');
+      } catch (error) {
+        console.error('Failed to update note', error);
+      }
+    }
   }
-
-  function handleDelete() {
-    console.log('Delete note');
+ 
+  async function handleDelete() {
+    if (note) {
+      try {
+        await deleteNote(note.id);
+        router.push('/notes');
+      } catch (error) {
+        console.error('Failed to delete note', error);
+      }
+    }
   }
-
+ 
+  if (!note) {
+    return <div>Loading...</div>;
+  }
+ 
   return (
-    <div>
-      <h1>Note Detail</h1>
-      <p>Viewing note with ID: {noteId}</p>
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Edit Note</h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
@@ -71,10 +106,10 @@ const NoteDetailPage = () => {
             )}
           />
           <div className="flex space-x-2">
-            <Button type="submit">Save Note</Button>
+            <Button type="submit">Save Changes</Button>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="destructive">Delete</Button>
+                <Button variant="destructive">Delete Note</Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
@@ -98,5 +133,5 @@ const NoteDetailPage = () => {
     </div>
   );
 };
-
+ 
 export default NoteDetailPage;

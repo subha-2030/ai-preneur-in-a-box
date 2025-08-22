@@ -1,26 +1,46 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "../components/Navbar";
 
 export default function MainLayout({
-    children,
+  children,
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-    const router = useRouter();
+  const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [mounted, setMounted] = useState(false);
 
-    useEffect(() => {
-        const token = localStorage.getItem("accessToken");
-        if (!token) {
-            router.push("/login");
-        }
-    }, [router]);
+  useEffect(() => {
+    setMounted(true);
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      router.push("/login");
+      setIsAuthenticated(false);
+    } else {
+      setIsAuthenticated(true);
+    }
+  }, [router]);
 
+  // Show loading state while checking authentication or before mounting
+  if (!mounted || isAuthenticated === null) {
     return (
-        <div>
-            <Navbar />
-            {children}
-        </div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Loading...</div>
+      </div>
     );
+  }
+
+  // Don't render anything if not authenticated (will redirect)
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  return (
+    <div>
+      <Navbar />
+      {children}
+    </div>
+  );
 }

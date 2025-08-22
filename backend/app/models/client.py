@@ -3,7 +3,7 @@ from typing import Optional, List
 from datetime import datetime
 from beanie import Document
 
-class Group(Document):
+class Client(Document):
     name: str
     description: str
     created_by: str  # User ID from MongoDB
@@ -11,8 +11,9 @@ class Group(Document):
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
     class Settings:
-        name = "groups"
+        name = "clients"
 
-class GroupCreate(BaseModel):
+class ClientCreate(BaseModel):
     name: str
     description: str
+    meetingNotes: Optional[str] = None

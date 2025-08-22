@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -11,16 +11,24 @@ import {
 } from "../../../components/ui/table";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
-import { createNote } from '../../../lib/api';
-
-const notes = [
-  { id: 1, title: "Meeting with Team A", createdAt: "2023-01-10" },
-  { id: 2, title: "Project Kickoff", createdAt: "2023-01-12" },
-  { id: 3, title: "Design Review", createdAt: "2023-01-15" },
-];
+import { createNote, getNotes, Note } from '../../../lib/api';
 
 const NotesPage = () => {
+  const [notes, setNotes] = useState<Note[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    const fetchNotes = async () => {
+      try {
+        const fetchedNotes = await getNotes();
+        setNotes(fetchedNotes);
+      } catch (error) {
+        console.error('Failed to fetch notes:', error);
+      }
+    };
+
+    fetchNotes();
+  }, []);
 
   const filteredNotes = notes.filter(note =>
     note.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -28,7 +36,7 @@ const NotesPage = () => {
 
   const handleCreateNote = async () => {
     try {
-      const newNote = await createNote({ title: 'New Note', content: 'This is a new note.' });
+      const newNote = await createNote({ title: 'New Note', content: 'This is a new note.', createdAt: new Date().toISOString() });
       console.log('Note created successfully:', newNote);
     } catch (error) {
       console.error('Failed to create note:', error);
@@ -62,7 +70,7 @@ const NotesPage = () => {
           {filteredNotes.map((note) => (
             <TableRow key={note.id}>
               <TableCell>{note.title}</TableCell>
-              <TableCell>{note.createdAt}</TableCell>
+              <TableCell>{new Date(note.createdAt).toLocaleDateString()}</TableCell>
             </TableRow>
           ))}
         </TableBody>
