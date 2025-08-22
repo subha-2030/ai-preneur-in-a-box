@@ -10,8 +10,10 @@ export default function MainLayout({
 }) {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const token = localStorage.getItem("accessToken");
     if (!token) {
       router.push("/login");
@@ -21,8 +23,8 @@ export default function MainLayout({
     }
   }, [router]);
 
-  // Show loading state while checking authentication
-  if (isAuthenticated === null) {
+  // Show loading state while checking authentication or before mounting
+  if (!mounted || isAuthenticated === null) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-lg">Loading...</div>

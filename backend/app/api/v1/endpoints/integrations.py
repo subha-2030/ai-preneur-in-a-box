@@ -76,6 +76,40 @@ async def google_calendar_callback(
     await calendar_service.process_callback(code, current_user)
     return RedirectResponse("http://localhost:3000/dashboard")
 
+@router.get("/google/connection-status")
+async def get_google_calendar_connection_status(current_user: User = Depends(get_current_user)):
+    """Check if the user has connected their Google Calendar"""
+    is_connected = current_user.google_calendar_credentials is not None
+    
+    connection_info = {
+        "is_connected": is_connected,
+        "connected_at": None,
+        "email": None
+    }
+    
+    if is_connected and current_user.google_calendar_credentials:
+        # Try to get additional info from the credentials if available
+        try:
+            from google.oauth2.credentials import Credentials
+            credentials = Credentials(**current_user.google_calendar_credentials)
+            
+            # Build the calendar service to get user info
+            from googleapiclient.discovery import build
+            service = build('calendar', 'v3', credentials=credentials)
+            
+            # Get calendar list to verify connection and get primary calendar info
+            calendar_list = service.calendarList().list().execute()
+            primary_calendar = next((cal for cal in calendar_list.get('items', []) if cal.get('primary')), None)
+            
+            if primary_calendar:
+                connection_info["email"] = primary_calendar.get('id')  # Primary calendar ID is usually the email
+                
+        except Exception as e:
+            logger.warning(f"Could not fetch additional calendar info: {e}")
+            # Still return that it's connected, just without additional details
+    
+    return connection_info
+
 @router.get("/google/upcoming-meetings")
 async def get_upcoming_meetings(current_user: User = Depends(get_current_user)):
     calendar_service = GoogleCalendarService()

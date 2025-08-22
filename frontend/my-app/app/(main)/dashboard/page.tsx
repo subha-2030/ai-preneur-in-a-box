@@ -19,8 +19,10 @@ interface Meeting {
 export default function DashboardPage() {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const fetchMeetings = async () => {
       try {
         const upcomingMeetings = await getUpcomingMeetings();
@@ -85,7 +87,8 @@ export default function DashboardPage() {
     }
   };
 
-  if (loading) {
+  // Prevent hydration mismatch by not rendering time-sensitive content until mounted
+  if (!mounted || loading) {
     return (
       <div className="container mx-auto p-6 max-w-4xl">
         <div className="mb-8">

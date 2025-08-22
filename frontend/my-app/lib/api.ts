@@ -148,6 +148,24 @@ export async function getGoogleAuthorizationUrl(): Promise<{
   }
   return response.json();
 }
+
+export async function getGoogleCalendarConnectionStatus(): Promise<{
+  is_connected: boolean;
+  connected_at?: string;
+  email?: string;
+}> {
+  const response = await fetch(
+    `${API_URL}/api/v1/integrations/google/connection-status`,
+    {
+      headers: getAuthHeaders(),
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Failed to get Google Calendar connection status");
+  }
+  return response.json();
+}
+
 export async function handleGoogleCallback(
   code: string,
   state: string

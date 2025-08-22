@@ -1,24 +1,43 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
+    setMounted(true);
+    const token = localStorage.getItem("accessToken");
     if (token) {
       setIsAuthenticated(true);
     }
   }, []);
 
+  // Don't render auth-dependent content until mounted
+  if (!mounted) {
+    return (
+      <nav className="bg-gray-800 p-4">
+        <div className="container mx-auto flex justify-between items-center">
+          <Link href="/" className="text-white text-lg font-bold">
+            Home
+          </Link>
+          <div className="flex items-center">
+            {/* Show loading state or empty space */}
+            <div className="w-32 h-10"></div>
+          </div>
+        </div>
+      </nav>
+    );
+  }
+
   const handleLogout = () => {
-    localStorage.removeItem('accessToken');
+    localStorage.removeItem("accessToken");
     setIsAuthenticated(false);
-    router.push('/login');
+    router.push("/login");
   };
 
   return (
@@ -57,10 +76,7 @@ const Navbar = () => {
               >
                 Login
               </Link>
-              <Link
-                href="/register"
-                className="text-gray-300 hover:text-white"
-              >
+              <Link href="/register" className="text-gray-300 hover:text-white">
                 Register
               </Link>
             </>
