@@ -41,8 +41,8 @@ export default function LoginPage() {
       localStorage.setItem("accessToken", data.access_token);
       localStorage.setItem("refreshToken", data.refresh_token);
       router.push("/dashboard"); // Redirect to a protected route or dashboard
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'An error occurred');
     }
   };
 

@@ -55,7 +55,7 @@ const api = {
     }
     return response.json();
   },
-  post: async (path: string, data: any) => {
+  post: async (path: string, data: unknown) => {
     let response = await fetch(`${API_URL}/api/v1${path}`, {
       method: 'POST',
       headers: {
@@ -80,7 +80,7 @@ const api = {
     }
     return response.json();
   },
-  put: async (path: string, data: any) => {
+  put: async (path: string, data: unknown) => {
     let response = await fetch(`${API_URL}/api/v1${path}`, {
       method: 'PUT',
       headers: {
@@ -136,7 +136,7 @@ const getAuthHeaders = (): HeadersInit => {
 };
 
 export interface Note {
-  id: string;
+  id: number;
   client_name: string;
   meeting_date: string;
   content: string;
@@ -204,6 +204,18 @@ export async function deleteNote(id: number): Promise<void> {
     throw new Error("Failed to delete note");
   }
 }
+export interface Meeting {
+  id: string;
+  summary: string;
+  start: {
+    dateTime: string;
+  };
+  htmlLink: string;
+  attendees?: Array<{ email: string }>;
+  location?: string;
+  description?: string;
+}
+
 export interface Client {
   id: string;
   name: string;
@@ -219,7 +231,7 @@ export async function getClients(): Promise<Client[]> {
     throw new Error("Failed to fetch clients");
   }
   const data = await response.json();
-  return data.map((client: any) => ({
+  return data.map((client: Record<string, unknown>) => ({
     ...client,
     id: client._id,
   }));
@@ -245,7 +257,7 @@ export async function createClient(
   return api.post("/clients/", client);
 }
 
-export async function getUpcomingMeetings(): Promise<any[]> {
+export async function getUpcomingMeetings(): Promise<Meeting[]> {
   return api.get("/integrations/google/upcoming-meetings");
 }
 
@@ -284,7 +296,7 @@ export async function getGoogleCalendarConnectionStatus(): Promise<{
 export async function handleGoogleCallback(
   code: string,
   state: string
-): Promise<any> {
+): Promise<Record<string, unknown>> {
   const response = await fetch(
     `${API_URL}/api/v1/integrations/google/callback?code=${code}&state=${state}`,
     {

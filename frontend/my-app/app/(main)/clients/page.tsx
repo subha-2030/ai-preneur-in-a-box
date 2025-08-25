@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { getClients, getClientById, updateClient, deleteClient, Client } from "../../../lib/api";
 import { Button } from "@/components/ui/button";
 import {
@@ -60,7 +59,6 @@ export default function ClientsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   const fetchClients = async () => {
     try {

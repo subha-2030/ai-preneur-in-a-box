@@ -28,7 +28,7 @@ const NotesPage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newNote, setNewNote] = useState({
     client_name: '',
-    meeting_date: new Date().toISOString().split('T'),
+    meeting_date: new Date().toISOString().split('T')[0],
     content: '',
   });
 
@@ -44,7 +44,7 @@ const NotesPage = () => {
         if (fetchedClients.length > 0) {
           setNewNote((prev) => ({
             ...prev,
-            client_name: fetchedClients.name,
+            client_name: fetchedClients[0].name,
           }));
         }
       } catch (error) {
@@ -63,7 +63,7 @@ const NotesPage = () => {
     try {
       await createNote({
         ...newNote,
-        meeting_date: new Date(newNote.meeting_date).toISOString(),
+        meeting_date: newNote.meeting_date,
       });
       setIsDialogOpen(false);
       const fetchedNotes = await getNotes();

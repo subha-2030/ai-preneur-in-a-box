@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 
 export default function HealthCheck() {
-  const [status, setStatus] = useState(null);
+  const [status, setStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchHealth = async () => {
@@ -18,8 +18,8 @@ export default function HealthCheck() {
         }
         const data = await response.json();
         setStatus(data.status);
-      } catch (error: any) {
-        setError(error.message);
+      } catch (error) {
+        setError(error instanceof Error ? error.message : 'An error occurred');
       } finally {
         setLoading(false);
       }

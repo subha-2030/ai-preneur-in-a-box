@@ -1,20 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
-import { getUpcomingMeetings } from "@/lib/api";
+import { getUpcomingMeetings, Meeting } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { CalendarDays, Clock, ExternalLink, Users, MapPin } from "lucide-react";
-
-interface Meeting {
-  id: string;
-  summary: string;
-  start: {
-    dateTime: string;
-  };
-  htmlLink: string;
-  attendees?: Array<{ email: string }>;
-  location?: string;
-  description?: string;
-}
 
 export default function MeetingsPage() {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
