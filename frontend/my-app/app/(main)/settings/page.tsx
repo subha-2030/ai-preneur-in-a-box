@@ -66,6 +66,9 @@ export default function SettingsPage() {
           <p className="mt-2 text-gray-600">
             Manage your account settings and integrations
           </p>
+          <p className="text-center text-gray-500 my-4">
+           Coming soon: more integrations to calendar, notes, planning documents and slides
+         </p>
         </div>
 
         <div className="space-y-6">

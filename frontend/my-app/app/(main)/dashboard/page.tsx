@@ -16,7 +16,7 @@ interface Meeting {
   description?: string;
 }
 
-export default function DashboardPage() {
+export default function MeetingsPage() {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
@@ -92,7 +92,7 @@ export default function DashboardPage() {
     return (
       <div className="container mx-auto p-6 max-w-4xl">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Dashboard</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Meetings</h1>
           <p className="text-muted-foreground">
             Welcome back! Here&apos;s what&apos;s coming up.
           </p>
@@ -125,9 +125,12 @@ export default function DashboardPage() {
   return (
     <div className="container mx-auto p-6 max-w-4xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground mb-2">Dashboard</h1>
+        <h1 className="text-3xl font-bold text-foreground mb-2">Meetings</h1>
         <p className="text-muted-foreground">
           Welcome back! Here&apos;s what&apos;s coming up.
+        </p>
+        <p className="text-center text-gray-500 my-4">
+          Coming soon: access your meetings across calendars
         </p>
       </div>
 

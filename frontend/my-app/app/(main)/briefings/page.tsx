@@ -37,21 +37,32 @@ export default function BriefingsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [briefingToDelete, setBriefingToDelete] = useState<Briefing | null>(null);
 
-  useEffect(() => {
-    const fetchBriefings = async () => {
-      try {
-        const response = await api.get('/briefings');
-        const data = response || [];
-        setBriefings(data);
-        setFilteredBriefings(data);
-      } catch (err) {
-        setError('Failed to fetch briefings.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const handleUpdateBriefings = async () => {
+    try {
+      await api.post('/briefings/update', {});
+      fetchBriefings(); // Refresh the list
+    } catch (err) {
+      setError('Failed to update briefings.');
+      console.error(err);
+    }
+  };
 
+  const fetchBriefings = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get('/briefings');
+      const data = response || [];
+      setBriefings(data);
+      setFilteredBriefings(data);
+    } catch (err) {
+      setError('Failed to fetch briefings.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchBriefings();
   }, []);
 
@@ -91,6 +102,7 @@ export default function BriefingsPage() {
         <CardHeader>
           <div className="flex justify-between items-center">
             <CardTitle>Research Briefings</CardTitle>
+            <Button onClick={handleUpdateBriefings}>Update Research Briefings</Button>
           </div>
           <p className="text-sm text-gray-500">
             Here are the AI-generated briefings for your upcoming meetings.

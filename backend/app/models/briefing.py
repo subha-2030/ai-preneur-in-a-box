@@ -8,6 +8,7 @@ class ResearchBriefing(Document):
     client_name: str
     meeting_date: datetime
     summary: str
+    next_meeting_date: Optional[str] = None
     gaps: List[str]
     external_research: List[dict]
     suggested_questions: List[str]
@@ -21,6 +22,7 @@ class ResearchBriefingCreate(BaseModel):
     client_name: str
     meeting_date: datetime
     summary: str
+    next_meeting_date: Optional[str] = None
     gaps: List[str]
     external_research: List[dict]
     suggested_questions: List[str]

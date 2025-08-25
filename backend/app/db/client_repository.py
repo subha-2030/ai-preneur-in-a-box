@@ -26,10 +26,20 @@ async def create_client(client: ClientCreate, user_id: str) -> Client:
     return new_client
 
 async def get_client(client_id: str) -> Optional[Client]:
-    """Get a client by ID"""
+    """Get a client by ID and attach the latest meeting note"""
     try:
-        return await Client.get(ObjectId(client_id))
-    except:
+        client = await Client.get(ObjectId(client_id))
+        if client:
+            # Find the most recent meeting note for this client
+            latest_note = await MeetingNote.find(
+                MeetingNote.client_name == client.name
+            ).sort(-MeetingNote.meeting_date).limit(1).first_or_none()
+
+            if latest_note:
+                client.meetingNotes = latest_note.content
+        return client
+    except Exception as e:
+        print(f"Error fetching client or notes: {e}")
         return None
 
 async def get_clients_for_user(user_id: str) -> List[Client]:
@@ -56,6 +66,29 @@ async def remove_user_from_client(client_id: str, user_id: str) -> bool:
         if client and user_id in client.members:
             client.members.remove(user_id)
             await client.save()
+            return True
+        return False
+    except:
+        return False
+async def update_client(client_id: str, client_update: ClientCreate) -> Optional[Client]:
+    """Update a client by ID"""
+    try:
+        client = await Client.get(ObjectId(client_id))
+        if client:
+            client.name = client_update.name
+            client.description = client_update.description
+            client.meetingNotes = client_update.meetingNotes
+            await client.save()
+            return client
+        return None
+    except:
+        return None
+async def delete_client(client_id: str) -> bool:
+    """Delete a client by ID"""
+    try:
+        client = await Client.get(ObjectId(client_id))
+        if client:
+            await client.delete()
             return True
         return False
     except:

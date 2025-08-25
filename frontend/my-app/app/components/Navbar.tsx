@@ -50,10 +50,22 @@ const Navbar = () => {
           {isAuthenticated ? (
             <>
               <Link
+                href="/dashboard"
+                className="text-gray-300 hover:text-white mr-4"
+              >
+                Meetings
+              </Link>
+              <Link
                 href="/clients"
                 className="text-gray-300 hover:text-white mr-4"
               >
                 Clients
+              </Link>
+              <Link
+                href="/briefings"
+                className="text-gray-300 hover:text-white mr-4"
+              >
+                Briefings
               </Link>
               <Link
                 href="/settings"

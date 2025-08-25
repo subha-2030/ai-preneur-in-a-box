@@ -74,13 +74,31 @@ class GoogleCalendarService:
             return []
 
         credentials = Credentials(**user.google_calendar_credentials)
+
+        # Check if the credentials have expired and refresh them if necessary
+        if credentials.expired and credentials.refresh_token:
+            from google.auth.transport.requests import Request
+            credentials.refresh(Request())
+            
+            # Update the user's credentials in the database
+            user.google_calendar_credentials = {
+                'token': credentials.token,
+                'refresh_token': credentials.refresh_token,
+                'token_uri': credentials.token_uri,
+                'client_id': credentials.client_id,
+                'client_secret': credentials.client_secret,
+                'scopes': credentials.scopes
+            }
+            user_repo = UserRepository()
+            await user_repo.update_user(user)
+
         service = build('calendar', 'v3', credentials=credentials)
         
         now = datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
         events_result = service.events().list(
-            calendarId='primary', 
+            calendarId='primary',
             timeMin=now,
-            maxResults=10, 
+            maxResults=3,
             singleEvents=True,
             orderBy='startTime'
         ).execute()

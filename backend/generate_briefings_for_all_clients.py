@@ -8,7 +8,7 @@ from app.db.repository import UserRepository
 async def main():
     await connect_to_mongo()
     user_repo = UserRepository()
-    user = await user_repo.get_user_by_email("subha.shetty@gmail.com")
+    user = await user_repo.get_user_by_email("test@example.com")
     if not user:
         print("User not found.")
         return

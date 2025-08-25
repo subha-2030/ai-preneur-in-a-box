@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from app.core.security import create_access_token, verify_password
+from app.core.security import create_access_token, create_refresh_token, verify_password
 from app.db.repository import UserRepository
 from app.models.user import User
 from app.core.security import oauth2_scheme
@@ -47,4 +47,9 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token = create_access_token(data={"sub": user.email})
+    refresh_token = create_refresh_token(data={"sub": user.email})
+    return {"access_token": access_token, "refresh_token": refresh_token, "token_type": "bearer"}
+@router.post("/refresh")
+async def refresh_access_token(current_user: User = Depends(get_current_user)):
+    access_token = create_access_token(data={"sub": current_user.email})
     return {"access_token": access_token, "token_type": "bearer"}

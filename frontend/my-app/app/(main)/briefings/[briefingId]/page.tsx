@@ -14,6 +14,7 @@ interface Briefing {
   client_name: string;
   meeting_date: string;
   summary: string;
+  next_meeting_date: string;
   gaps: string[];
   external_research: { title: string; link: string; snippet: string }[];
   suggested_questions: string[];
@@ -86,7 +87,7 @@ export default function BriefingDetailPage() {
             <div>
               <CardTitle className="text-3xl">{briefing.client_name}</CardTitle>
               <CardDescription>
-                Meeting on {new Date(briefing.meeting_date).toLocaleDateString()}
+                Meeting on {new Date(briefing.meeting_date).toLocaleDateString()} | Next Meeting: {briefing.next_meeting_date ? new Date(briefing.next_meeting_date).toLocaleDateString() : "Not scheduled"}
               </CardDescription>
             </div>
             <AlertDialog>
