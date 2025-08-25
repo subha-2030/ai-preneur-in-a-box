@@ -9,6 +9,7 @@ app = FastAPI()
 # Set up CORS
 origins = [
     "http://localhost:3000",
+    "https://ai-preneur-in-a-box.onrender.com",
     # Add other origins if needed, e.g., your production frontend URL
 ]
 
